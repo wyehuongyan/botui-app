@@ -10,10 +10,12 @@ function Node(key) {
 }
 
 botui.message.bot({ // show first message
-  delay: 200,
+  loading: true,
+  delay: 1000,
   content: 'hello there!'
 }).then(function () {
   return botui.message.add({ // second one
+    loading: true,
     delay: 1000, // wait 1 sec.
     content: 'how are you?'
   });
@@ -32,12 +34,14 @@ botui.message.bot({ // show first message
     ]
   });
 }).then(function (res) {
-  return botui.message.bot({
+  return botui.message.add({
+    loading: true,
     delay: 1000,
     content: 'glad you are feeling ' + res.text + '!'
   });
 }).then(function() {
   return botui.message.add({ // show a message
+    loading: true,
     delay: 1000, // wait 1 sec.
     content: 'whats your name?'
   })
@@ -49,11 +53,13 @@ botui.message.bot({ // show first message
   });
 }).then(function (res) {
   return botui.message.add({
+    loading: true,
     delay: 1000, // wait 1 sec.
     content: 'nice to meet you, ' + res.value
   });
 }).then(function() {
   return botui.message.add({ // show a message
+    loading: true,
     delay: 1000, // wait 1 sec.
     content: 'would you like to know whats i have done recently?'
   });
@@ -79,7 +85,7 @@ botui.message.bot({ // show first message
       response = "i've just completed my [udacity nanodegree](https://www.udacity.com/course/deep-learning-nanodegree-foundation--nd101) and right now i'm learning golang!";
       break;
     case 'no':
-      response = "it's alright, you can scroll down to know more about me!"
+      response = "that's too bad... :("
       break;
     default:
       response = "hmmm... what?"
@@ -87,7 +93,14 @@ botui.message.bot({ // show first message
   }
 
   return botui.message.add({ // show a message
+    loading: true,
     delay: 1000, // wait 1 sec.
     content: response
+  });
+}).then(function () {
+  return botui.message.add({ // show a message
+    loading: true,
+    delay: 1000, // wait 1 sec.
+    content: 'please scroll down to know more about me! have a great day! :)'
   });
 });
