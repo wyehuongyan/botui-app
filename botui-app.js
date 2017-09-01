@@ -2,7 +2,7 @@ var botui = new BotUI('botui-app'); // give it the id of container
 
 botui.message.bot({ // show first message
   delay: 200,
-  content: 'hello'
+  content: 'hello there!'
 }).then(function () {
   return botui.message.bot({ // second one
     delay: 1000, // wait 1 sec.
@@ -25,6 +25,21 @@ botui.message.bot({ // show first message
 }).then(function (res) {
   return botui.message.bot({
     delay: 1000,
-    content: 'You are feeling ' + res.text + '!'
+    content: 'glad you are feeling ' + res.text + '!'
+  });
+}).then(function() {
+  return botui.message.add({ // show a message
+    human: true,
+    content: 'whats your name?'
+  })
+}).then(function () { // wait till its shown
+  return botui.action.text({ // show 'text' action
+    action: {
+      placeholder: 'Your name'
+    }
+  });
+}).then(function (res) {
+  return botui.message.add({
+    content: 'Your name is ' + res.value
   });
 });
