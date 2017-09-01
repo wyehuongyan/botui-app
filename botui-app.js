@@ -55,19 +55,19 @@ botui.message.bot({ // show first message
 }).then(function() {
   return botui.message.add({ // show a message
     delay: 1000, // wait 1 sec.
-    content: 'what would you like to know about me?'
+    content: 'would you like to know whats i have done recently?'
   });
 }).then(function () {
   return botui.action.button({ // let user do something
     delay: 1000,
     action: [
       {
-        text: 'how old are you?',
-        value: 'how_old_are_you'
+        text: 'sure, why not?',
+        value: 'yes'
       },
       {
-        text: 'what are you working on currently?',
-        value: 'what_are_you_working_on_currently'
+        text: 'nope',
+        value: 'no'
       }
     ]
   });
@@ -75,11 +75,11 @@ botui.message.bot({ // show first message
   let response = ""
 
   switch (res.value) {
-    case 'how_old_are_you':
-      response = "that's a secret..."
+    case 'yes':
+      response = "i've just completed my [udacity nanodegree](https://www.udacity.com/course/deep-learning-nanodegree-foundation--nd101) and right now i'm learning golang!";
       break;
-    case 'what_are_you_working_on_currently':
-      response = "i've just completed my [udacity nanodegree](https://www.udacity.com/course/deep-learning-nanodegree-foundation--nd101) and right now i'm learning golang!"
+    case 'no':
+      response = "it's alright, you can scroll down to know more about me!"
       break;
     default:
       response = "hmmm... what?"
