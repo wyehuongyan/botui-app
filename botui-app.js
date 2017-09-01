@@ -28,8 +28,8 @@ botui.message.bot({ // show first message
         value: 'good'
       },
       {
-        text: 'really good',
-        value: 'really_good'
+        text: 'fantastic',
+        value: 'fantastic'
       }
     ]
   });
