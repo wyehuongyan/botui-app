@@ -61,7 +61,7 @@ botui.message.bot({ // show first message
   return botui.message.add({ // show a message
     loading: true,
     delay: 1000, // wait 1 sec.
-    content: 'would you like to know whats i have done recently?'
+    content: "would you like to know what i'm up to recently?"
   });
 }).then(function () {
   return botui.action.button({ // let user do something
