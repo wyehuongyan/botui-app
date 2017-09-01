@@ -13,11 +13,11 @@ botui.message.bot({ // show first message
     delay: 1000,
     action: [
       {
-        text: 'Good',
+        text: 'good',
         value: 'good'
       },
       {
-        text: 'Really Good',
+        text: 'really good',
         value: 'really_good'
       }
     ]
@@ -29,7 +29,7 @@ botui.message.bot({ // show first message
   });
 }).then(function() {
   return botui.message.add({ // show a message
-    human: true,
+    delay: 1000, // wait 1 sec.
     content: 'whats your name?'
   })
 }).then(function () { // wait till its shown
@@ -40,6 +40,7 @@ botui.message.bot({ // show first message
   });
 }).then(function (res) {
   return botui.message.add({
+    delay: 1000, // wait 1 sec.
     content: 'Your name is ' + res.value
   });
 });
