@@ -129,7 +129,7 @@ const c = new Node(
   {
     "recent work": () => { return "i've just completed my [udacity nanodegree](https://www.udacity.com/course/deep-learning-nanodegree-foundation--nd101) and right now i'm learning golang!"; },     
     "hobbies": () => { return "i enjoy cycling, watching american dramas and eating delicious hawker food! i've also started to learn pottery..."; },
-    "my age": () => { return "lol, this is a secret!"; },
+    "my age": () => { return "lol, this is a secret! ![make a guess?](http://newscult.com/wp-content/uploads/2015/04/varys.gif)"; },
     "gtg": (that) => { that.setRepeating(false); return "it was nice meeting you!"; }
   }
 );
