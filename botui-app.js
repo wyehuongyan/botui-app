@@ -1,106 +1,142 @@
-var botui = new BotUI('botui-app'); // give it the id of container
+const botui = new BotUI('botui-app'); // give it the id of container
 
-function Node(key) {
-  this.children = []
-  this.parent = null
+class Node {
+  constructor(parent = null, text = null, choices = [], responses = {}, action = null, placeholder = "") {
+    this.next = null;
+    this.parent = parent;
 
-  this.question = null
-  this.answers = []
-  this.responses = []
-}
+    this.text = text;
+    this.choices = choices;
+    this.responses = responses;
 
-botui.message.bot({ // show first message
-  loading: true,
-  delay: 1000,
-  content: 'hello there!'
-}).then(function () {
-  return botui.message.add({ // second one
-    loading: true,
-    delay: 1000, // wait 1 sec.
-    content: 'how are you?'
-  });
-}).then(function () {
-  return botui.action.button({ // let user do something
-    delay: 1000,
-    action: [
-      {
-        text: 'good',
-        value: 'good'
-      },
-      {
-        text: 'fantastic',
-        value: 'fantastic'
-      }
-    ]
-  });
-}).then(function (res) {
-  return botui.message.add({
-    loading: true,
-    delay: 1000,
-    content: 'glad you are feeling ' + res.text + '!'
-  });
-}).then(function() {
-  return botui.message.add({ // show a message
-    loading: true,
-    delay: 1000, // wait 1 sec.
-    content: 'whats your name?'
-  })
-}).then(function () { // wait till its shown
-  return botui.action.text({ // show 'text' action
-    action: {
-      placeholder: 'Your name'
-    }
-  });
-}).then(function (res) {
-  return botui.message.add({
-    loading: true,
-    delay: 1000, // wait 1 sec.
-    content: 'nice to meet you, ' + res.value
-  });
-}).then(function() {
-  return botui.message.add({ // show a message
-    loading: true,
-    delay: 1000, // wait 1 sec.
-    content: "would you like to know what i'm up to recently?"
-  });
-}).then(function () {
-  return botui.action.button({ // let user do something
-    delay: 1000,
-    action: [
-      {
-        text: 'sure, why not?',
-        value: 'yes'
-      },
-      {
-        text: 'nope',
-        value: 'no'
-      }
-    ]
-  });
-}).then(function (res) {
-  let response = ""
-
-  switch (res.value) {
-    case 'yes':
-      response = "i've just completed my [udacity nanodegree](https://www.udacity.com/course/deep-learning-nanodegree-foundation--nd101) and right now i'm learning golang!";
-      break;
-    case 'no':
-      response = "that's too bad... :("
-      break;
-    default:
-      response = "hmmm... what?"
-      break;
+    this.action = action;
+    this.placeholder = placeholder;
   }
 
-  return botui.message.add({ // show a message
-    loading: true,
-    delay: 1000, // wait 1 sec.
-    content: response
-  });
-}).then(function () {
-  return botui.message.add({ // show a message
-    loading: true,
-    delay: 1000, // wait 1 sec.
-    content: 'please scroll down to know more about me! have a great day! :)'
-  });
-});
+  setRepeating(repeating) {
+    if (repeating && repeating == true) {
+      this.next = this;
+    } else {
+      this.next = null;
+    }
+  }
+
+  run() {
+    return botui.message.bot({ // show first message
+      loading: true,
+      delay: 1000,
+      content: this.text
+    }).then(() => {
+      if (this.choices.length > 0) {
+        return botui.action.button({ // let user do something
+          delay: 1000,
+          action: this.choices.map((choice) => {
+            return {
+              text: choice,
+              value: choice
+            }
+          })
+        });
+      }
+    }).then((res) => {
+      if (res) {
+        let response = this.responses[res.value];
+
+        return botui.message.add({ // show a message
+          loading: true,
+          delay: 1000, // wait 1 sec.
+          content: response(this)
+        });
+      }
+    }).then(() => {
+      if (this.action) {
+        return botui.action.text({ // show 'text' action
+          action: {
+            placeholder: this.placeholder
+          }
+        });
+      }
+    }).then((res) => {
+      if (res) {
+        let response = this.responses['ACTION'];
+
+        return botui.message.add({ // show a message
+          loading: true,
+          delay: 1000, // wait 1 sec.
+          content: response(res)
+        });
+      }
+    }).then(() => {
+      // go to next node
+      if (this.next) {
+        return this.next.run();
+      } else {
+        return botui.message.add({ // show a message
+          loading: true,
+          delay: 1000, // wait 1 sec.
+          content: "cya, have a nice day!"
+        });
+      }
+    })
+  }
+}
+
+class Graph {
+  constructor(root = null) {
+    this.root = root;
+  }
+
+  addNode(newNode) {
+    let current = this.root;
+
+    while (current.next != null) {
+      current = current.next
+    }
+
+    current.next = newNode;
+  }
+
+  run() {
+    return this.root.run()
+  }
+}
+
+const a = new Node(
+  null, 
+  "hello there! how are you?", 
+  ["good", "fantastic"], 
+  { 
+    "good": () => { return "glad you're feeling good!"; }, 
+    "fantastic": () => { return "wow! feeling fantastic? nice!"; }
+  }
+);
+
+const b = new Node(
+  null, 
+  "what's your name?",
+  [],
+  { 
+    "ACTION": (res) => { return `nice to meet you, ${res.value}!` } 
+  },
+  "TEXT",
+  "Your Name"
+);
+
+const c = new Node(
+  null,
+  "what would you like to know about me?",
+  ["recent work", "hobbies", "my age", "gtg"], 
+  {
+    "recent work": () => { return "i've just completed my [udacity nanodegree](https://www.udacity.com/course/deep-learning-nanodegree-foundation--nd101) and right now i'm learning golang!"; },     
+    "hobbies": () => { return "i enjoy cycling, watching american dramas and eating delicious hawker food! i've also started to learn pottery..."; },
+    "my age": () => { return "lol, this is a secret!"; },
+    "gtg": (that) => { that.setRepeating(false); return "it was nice meeting you!"; }
+  }
+);
+
+c.setRepeating(true);
+
+g = new Graph(a);
+g.addNode(b);
+g.addNode(c);
+g.run();
